@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'core.apps.wallets',
+    'core.apps.common'
 ]
 
 MIDDLEWARE = [
