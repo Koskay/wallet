@@ -37,31 +37,9 @@ app:
 app-logs:
 	${LOGS} ${BACK_CONTAINER} -f
 
-.PHONY: celery-logs
-celery-logs:
-	${LOGS} ${CELERY_CONTAINER} -f
-
 .PHONY: app-down
 app-down:
-	${DC} -f ${BACK_FILE} -f ${STORAGES_FILE} -f ${CELERY_FILE} down
-
-
-.PHONY: prod
-prod:
-	${DC} -f ${PROD_FILE} -f ${STORAGES_FILE} -f ${CELERY_FILE}  ${ENV} up --build -d
-
-.PHONY: prod-back-logs
-prod-back-logs:
-	${LOGS} ${BACK_CONTAINER} -f
-
-.PHONY: prod-front-logs
-prod-front-logs:
-	${LOGS} ${FRONT_CONTAINER} -f
-
-
-.PHONY: prod-down
-prod-down:
-	${DC} -f ${PROD_FILE} -f ${STORAGES_FILE} -f ${CELERY_FILE}  down
+	${DC} -f ${BACK_FILE} -f ${STORAGES_FILE}  down
 
 .PHONY: app-exec
 app-exec:
@@ -78,10 +56,6 @@ app-migrations:
 .PHONY: superuser
 superuser:
 	${EXEC} ${BACK_CONTAINER} ${MANAGE_PY} createsuperuser
-
-.PHONY: static
-static:
-	${EXEC} ${BACK_CONTAINER} ${MANAGE_PY} collectstatic
 
 .PHONY: run-test
 run-test:
