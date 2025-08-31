@@ -1,0 +1,56 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
+
+/cypress/videos/
+/cypress/screenshots/
+
+# Editor directories and files
+.vscode/*
+.ruff_cache/
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+*.tsbuildinfo
+
+replace-url.sh
+axios.config.js.bak
+
+# Каталоги и файлы, специфичные для PyCharm
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+
+# Каталоги виртуальных окружений
+venv/
+ENV/
+env/
+.venv/
+
+.vscode
+
+.env
+
+media
+static
+
+
+nginx.conf

@@ -1,0 +1,16 @@
+services:
+  backend:
+    container_name: web
+    build:
+      context: ../wallet_billing
+      dockerfile: Dockerfile
+    ports:
+      - "${DJANGO_PORT}:8000"
+    command: "sh /entrypoint.sh"
+    depends_on:
+      - postgres
+    volumes:
+      - ../wallet_billing:/app/
+    env_file:
+      - ../wallet_billing/.env
+
