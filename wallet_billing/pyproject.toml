@@ -1,0 +1,8 @@
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "core.project.settings.local"
+python_files = "test_*.py"  # запускать только файлы, начинающиеся с test_
+norecursedirs = ".venv node_modules"  # исключить директории
+filterwarnings =["ignore::DeprecationWarning", "ignore::UserWarning"]
+
+[tool.django-stubs]
+django_settings_module = "core.project.settings.main"
