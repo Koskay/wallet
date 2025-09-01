@@ -22,7 +22,6 @@ def sample_transaction_dto():
     """Фикстура для создания образца TransactionDTO."""
     wallet = WalletFactory()
     return TransactionDTO(
-        id=uuid.uuid4(),
         wallet_id=wallet.id,
         operation_type=OperationType.DEPOSIT,
         amount=Decimal('100.00'),
@@ -40,7 +39,6 @@ class TestTransactionService:
 
         transaction_dto = transaction_service.create_transaction(sample_transaction_dto)
         assert isinstance(transaction_dto, TransactionDTO)
-        assert transaction_dto.id == sample_transaction_dto.id
         assert str(transaction_dto.wallet_id) == sample_transaction_dto.wallet_id
         assert transaction_dto.operation_type == sample_transaction_dto.operation_type.value
         assert transaction_dto.amount == sample_transaction_dto.amount

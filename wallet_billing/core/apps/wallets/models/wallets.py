@@ -1,10 +1,10 @@
 import uuid
+from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from core.apps.common.models import TimedBaseModel
-
 
 
 class Wallet(TimedBaseModel):
@@ -27,7 +27,7 @@ class Wallet(TimedBaseModel):
         max_digits=15,
         decimal_places=2,
         default=0.00,
-        validators=[MinValueValidator(0)],
+        validators=[MinValueValidator(0), MaxValueValidator(Decimal('999999999'))],
         verbose_name='Баланс'
     )
 
@@ -43,3 +43,11 @@ class Wallet(TimedBaseModel):
 
     def __str__(self) -> str:
         return f"Кошелек пользователя {self.user.username}"
+
+    def deposit(self, amount: Decimal):
+        self.balance += amount
+        self.full_clean()
+
+    def withdrawal(self, amount: Decimal):
+        self.balance -= amount
+        self.full_clean()

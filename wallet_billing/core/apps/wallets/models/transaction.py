@@ -68,7 +68,6 @@ class WalletTransaction(TimedBaseModel):
     @classmethod
     def from_dto(cls, dto: TransactionDTO):
         return cls(
-            id=dto.id,
             wallet_id=dto.wallet_id,
             operation_type=dto.operation_type.value,
             amount=dto.amount,
