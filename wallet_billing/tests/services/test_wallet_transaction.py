@@ -2,9 +2,11 @@ import uuid
 from decimal import Decimal
 
 import pytest
+from django.core.exceptions import ValidationError
 
 from core.apps.common.enums import OperationType, TransactionStatus
 from core.apps.wallets.dto.transaction import TransactionDTO
+from core.apps.wallets.exception.transaction import TransactionCreationException
 from core.apps.wallets.services.transactions import TransactionService
 from tests.factories.wallets import WalletFactory
 
@@ -22,7 +24,7 @@ def sample_transaction_dto():
     return TransactionDTO(
         id=uuid.uuid4(),
         wallet_id=wallet.id,
-        operation_type=OperationType.OPERATION_DEPOSIT,
+        operation_type=OperationType.DEPOSIT,
         amount=Decimal('100.00'),
         balance_after=Decimal('1100.00'),
         balance_before=Decimal('1000.00'),
@@ -37,10 +39,24 @@ class TestTransactionService:
         """Тест успешного создания транзакции."""
 
         transaction_dto = transaction_service.create_transaction(sample_transaction_dto)
+        assert isinstance(transaction_dto, TransactionDTO)
         assert transaction_dto.id == sample_transaction_dto.id
-        assert transaction_dto.wallet_id == sample_transaction_dto.wallet_id
-        assert transaction_dto.operation_type == "Пополнение"
+        assert str(transaction_dto.wallet_id) == sample_transaction_dto.wallet_id
+        assert transaction_dto.operation_type == sample_transaction_dto.operation_type.value
         assert transaction_dto.amount == sample_transaction_dto.amount
         assert transaction_dto.balance_after == sample_transaction_dto.balance_after
         assert transaction_dto.balance_before == sample_transaction_dto.balance_before
-        assert transaction_dto.status == "Успешно"
+        assert transaction_dto.status == sample_transaction_dto.status.value
+
+    def test_create_transaction_failed_with_negative_amount(self, transaction_service, sample_transaction_dto):
+        sample_transaction_dto.amount = Decimal('-100.00')
+
+        with pytest.raises(TransactionCreationException):
+            transaction_service.create_transaction(sample_transaction_dto)
+
+
+    def test_create_transaction_failed_with_invalid_wallet(self, transaction_service, sample_transaction_dto):
+        sample_transaction_dto.wallet_id = uuid.uuid4()
+
+        with pytest.raises(TransactionCreationException):
+            transaction_service.create_transaction(sample_transaction_dto)
