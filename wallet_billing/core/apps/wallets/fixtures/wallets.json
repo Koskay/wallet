@@ -1,0 +1,35 @@
+[
+{
+  "model": "wallets.wallet",
+  "pk": "2bf561d7-c3f9-4281-ba7b-d29cf7d6273c",
+  "fields": {
+    "created_at": "2025-08-31T16:36:07.721Z",
+    "updated_at": "2025-08-31T16:36:07.721Z",
+    "user": 3,
+    "balance": "1000.00",
+    "is_active": true
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "8902108a-6710-4bf2-bf14-e5c1ac8cd291",
+  "fields": {
+    "created_at": "2025-08-31T16:36:00.120Z",
+    "updated_at": "2025-08-31T16:36:00.120Z",
+    "user": 2,
+    "balance": "1000.00",
+    "is_active": true
+  }
+},
+{
+  "model": "wallets.wallet",
+  "pk": "8b3ca2df-f48f-4f27-9507-9fd7549f7335",
+  "fields": {
+    "created_at": "2025-09-02T12:08:29.272Z",
+    "updated_at": "2025-09-02T12:08:29.272Z",
+    "user": 1,
+    "balance": "1000.00",
+    "is_active": true
+  }
+}
+]

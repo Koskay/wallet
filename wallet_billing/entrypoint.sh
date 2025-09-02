@@ -1,3 +1,10 @@
+#!/bin/sh
+# Применение миграций
+python manage.py migrate
+
+# Загрузка фикстур в определенном порядке
+python manage.py loaddata users.json wallets.json
+
 gunicorn \
   --access-logfile - \
   --error-logfile - \

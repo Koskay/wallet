@@ -1,7 +1,7 @@
 import uuid
 
-from django.http import HttpRequest, HttpResponse
-from django.middleware.csrf import get_token
+from django.http import HttpRequest
+
 from ninja import Router
 from ninja.errors import HttpError
 
@@ -16,6 +16,12 @@ router = Router(tags=["Wallets"])
 @router.post('{wallet_id}/operation',
              response={201: ApiResponse[WalletTransactionOutSchema]},
              description="""Пополнение или списание средств с кошелька.
+             
+             Данные кошельков:
+             - id: 8902108a-6710-4bf2-bf14-e5c1ac8cd291
+             - id: 2bf561d7-c3f9-4281-ba7b-d29cf7d6273c
+             
+             - На обоих начальный баланс: 1000.00
 
              Операции:
              - deposit: Пополнение кошелька на указанную сумму
@@ -50,6 +56,10 @@ def create_wallet(request: HttpRequest,
 @router.get('{wallet_id}',
             response=ApiResponse[WalletDataOutSchema],
             description="""Получение кошелька по его id, вместе с 5 последними транзакциями.
+            
+            Данные кошельков:
+             - id: 8902108a-6710-4bf2-bf14-e5c1ac8cd291
+             - id: 2bf561d7-c3f9-4281-ba7b-d29cf7d6273c
 
              Параметры:
              - wallet_id: UUID кошелька 
