@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
@@ -8,6 +9,8 @@ from core.apps.wallets.dto.transaction import TransactionDTO
 from core.apps.wallets.exception.transaction import TransactionCreationException
 from core.apps.wallets.models.transaction import WalletTransaction
 
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class BaseTransactionService(ABC):
@@ -40,7 +43,10 @@ class TransactionService(BaseTransactionService):
         try:
             transaction_model.full_clean()
             transaction_model.save()
+
+            logger.info(f'Успешное создания транзакции для кошелька {transaction_model.wallet_id}')
         except (IntegrityError, ValidationError):
+            logger.error(f'Ошибка создания транзакции для кошелька {transaction_model.wallet_id} не пройдена валидация')
             raise TransactionCreationException(wallet_id=transaction_model.wallet_id,
                                                operation_type=transaction_model.operation_type,
                                                amount=transaction_model.amount)

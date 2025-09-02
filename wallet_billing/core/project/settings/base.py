@@ -165,7 +165,7 @@ LOGGING = {
         },
 
         # Ваши приложения
-        'apps': {  # Замените на prefix ваших приложений
+        'core.apps.wallets': {  # Замените на prefix ваших приложений
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,

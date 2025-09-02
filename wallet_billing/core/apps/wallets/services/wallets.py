@@ -1,3 +1,4 @@
+import logging
 import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -12,6 +13,8 @@ from core.apps.wallets.exception.wallets import WalletNotFoundException, Insuffi
 from core.apps.wallets.models.wallets import Wallet
 from core.apps.wallets.services.transactions import BaseTransactionService
 
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class BaseWalletCommandService(ABC):
@@ -58,6 +61,7 @@ class WalletQueryService(BaseWalletQueryService):
             wallet_model = Wallet.objects.prefetch_related('transactions').get(id=wallet_id)
             return wallet_model.to_dto()
         except Wallet.DoesNotExist:
+            logger.error(f'Кошелек с id {wallet_id} не найден')
             raise WalletNotFoundException(wallet_id=wallet_id)
 
 class WalletCommandService(BaseWalletCommandService):
@@ -79,6 +83,8 @@ class WalletCommandService(BaseWalletCommandService):
 
         wallet_model.deposit(amount=operation_data.amount)
         wallet_model.save(update_fields=['balance'])
+
+        logger.info(f'Кошелек с id {operation_data.wallet_id} успешно пополнен на сумму: {operation_data.amount}')
 
         return self._create_transaction(
             wallet=wallet_model,
@@ -108,6 +114,8 @@ class WalletCommandService(BaseWalletCommandService):
         wallet_model.withdrawal(amount=operation_data.amount)
         wallet_model.save(update_fields=['balance'])
 
+        logger.info(f'С кошелька с id {operation_data.wallet_id} успешно списана сумма: {operation_data.amount}')
+
         return self._create_transaction(
             wallet=wallet_model,
             operation_data=operation_data,
@@ -132,6 +140,7 @@ class WalletCommandService(BaseWalletCommandService):
             wallet_model = Wallet.objects.select_for_update().get(id=wallet_id)
             return wallet_model
         except Wallet.DoesNotExist:
+            logger.error(f'Кошелек с id {wallet_id} не найден')
             raise WalletNotFoundException(wallet_id=wallet_id)
 
     @staticmethod
@@ -147,6 +156,7 @@ class WalletCommandService(BaseWalletCommandService):
             InsufficientFundsException: Если баланс недостаточен
         """
         if balance < amount:
+            logger.error(f'Ошибка списания с баланса {balance} на сумму: {amount}, не хватает средств')
             raise InsufficientFundsException(balance=balance, amount=amount)
 
     def _create_transaction(

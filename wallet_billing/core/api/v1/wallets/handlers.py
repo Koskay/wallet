@@ -1,6 +1,7 @@
 import uuid
 
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
+from django.middleware.csrf import get_token
 from ninja import Router
 from ninja.errors import HttpError
 
@@ -67,3 +68,6 @@ def get_wallet(request: HttpRequest,
     except ServiceException as exc:
         raise HttpError(status_code=exc.status_code, message=exc.message)
     return ApiResponse(data=WalletDataOutSchema.from_dto(wallet_dto))
+
+
+
