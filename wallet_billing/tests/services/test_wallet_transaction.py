@@ -2,7 +2,6 @@ import uuid
 from decimal import Decimal
 
 import pytest
-from django.core.exceptions import ValidationError
 
 from core.apps.common.enums import OperationType, TransactionStatus
 from core.apps.wallets.dto.transaction import TransactionDTO
@@ -40,13 +39,14 @@ class TestTransactionService:
         transaction_dto = transaction_service.create_transaction(sample_transaction_dto)
         assert isinstance(transaction_dto, TransactionDTO)
         assert str(transaction_dto.wallet_id) == sample_transaction_dto.wallet_id
-        assert transaction_dto.operation_type == sample_transaction_dto.operation_type.value
+        assert transaction_dto.operation_type == sample_transaction_dto.operation_type
         assert transaction_dto.amount == sample_transaction_dto.amount
         assert transaction_dto.balance_after == sample_transaction_dto.balance_after
         assert transaction_dto.balance_before == sample_transaction_dto.balance_before
-        assert transaction_dto.status == sample_transaction_dto.status.value
+        assert transaction_dto.status == sample_transaction_dto.status
 
     def test_create_transaction_failed_with_negative_amount(self, transaction_service, sample_transaction_dto):
+        """Транзакция должная вызывать исключение при попытке создать с отрицательной суммой"""
         sample_transaction_dto.amount = Decimal('-100.00')
 
         with pytest.raises(TransactionCreationException):
@@ -54,6 +54,7 @@ class TestTransactionService:
 
 
     def test_create_transaction_failed_with_invalid_wallet(self, transaction_service, sample_transaction_dto):
+        """Транзакция должная вызывать исключение при попытке создать с несуществующим кошельком"""
         sample_transaction_dto.wallet_id = uuid.uuid4()
 
         with pytest.raises(TransactionCreationException):

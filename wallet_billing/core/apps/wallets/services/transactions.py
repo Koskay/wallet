@@ -11,15 +11,31 @@ from core.apps.wallets.models.transaction import WalletTransaction
 
 @dataclass
 class BaseTransactionService(ABC):
+    """Абстрактный базовый сервис для работы с транзакциями."""
 
     @abstractmethod
     def create_transaction(self, transaction: TransactionDTO) -> TransactionDTO:
+        """Создает новую транзакцию."""
         ...
 
 
 class TransactionService(BaseTransactionService):
+    """Сервис для создания и управления транзакциями кошелька."""
 
     def create_transaction(self, transaction: TransactionDTO) -> TransactionDTO:
+        """
+        Создает новую транзакцию в базе данных с валидацией.
+        
+        Args:
+            transaction: DTO объект транзакции для создания
+            
+        Returns:
+            TransactionDTO: DTO созданной транзакции
+            
+        Raises:
+            TransactionCreationException: Если произошла ошибка при создании транзакции
+                (нарушение целостности данных или ошибка валидации)
+        """
         transaction_model = WalletTransaction.from_dto(transaction)
         try:
             transaction_model.full_clean()

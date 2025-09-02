@@ -60,3 +60,11 @@ superuser:
 .PHONY: run-test
 run-test:
 	${EXEC} ${BACK_CONTAINER} pytest -s
+
+.PHONY: run-unittest
+run-unittest:
+	${EXEC} ${BACK_CONTAINER} pytest -s tests/services/
+
+.PHONY: run-e2e-test
+run-e2e-test:
+	${EXEC} ${BACK_CONTAINER} pytest -s tests/e2e/

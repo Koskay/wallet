@@ -10,7 +10,7 @@ from core.apps.wallets.dto.wallets import WalletOperationDTO
 from core.apps.wallets.exception.wallets import WalletNotFoundException, InsufficientFundsException
 from core.apps.wallets.models.wallets import Wallet
 from core.apps.wallets.services.transactions import TransactionService
-from core.apps.wallets.services.wallets import WalletService
+from core.apps.wallets.services.wallets import WalletCommandService
 from tests.factories.wallets import WalletFactory
 
 
@@ -23,7 +23,7 @@ def transaction_service():
 @pytest.fixture
 def wallet_service(transaction_service):
     """Фикстура для создания экземпляра WalletService."""
-    return WalletService(transaction_service=transaction_service)
+    return WalletCommandService(transaction_service=transaction_service)
 
 
 class WalletTestDataFactory:

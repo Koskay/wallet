@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from dataclasses import dataclass
 from decimal import Decimal
@@ -14,6 +15,9 @@ class TransactionDTO:
     balance_after: Decimal
     wallet_id: uuid.UUID
     id: uuid.UUID = None
+    created_at: datetime.datetime = None
+
+
 
 
 

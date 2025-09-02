@@ -69,11 +69,11 @@ class WalletTransaction(TimedBaseModel):
     def from_dto(cls, dto: TransactionDTO):
         return cls(
             wallet_id=dto.wallet_id,
-            operation_type=dto.operation_type.value,
+            operation_type=dto.operation_type,
             amount=dto.amount,
             balance_after=dto.balance_after,
             balance_before=dto.balance_before,
-            status=dto.status.value
+            status=dto.status
         )
 
     def to_dto(self):
@@ -84,5 +84,6 @@ class WalletTransaction(TimedBaseModel):
             amount=self.amount,
             balance_after=self.balance_after,
             balance_before=self.balance_before,
-            status=TransactionStatus(self.status)
+            status=TransactionStatus(self.status),
+            created_at=self.created_at
         )

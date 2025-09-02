@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from core.apps.common.models import TimedBaseModel
+from core.apps.wallets.dto.wallets import WalletDTO
 
 
 class Wallet(TimedBaseModel):
@@ -51,3 +52,12 @@ class Wallet(TimedBaseModel):
     def withdrawal(self, amount: Decimal):
         self.balance -= amount
         self.full_clean()
+
+    def to_dto(self):
+        return WalletDTO(
+            id=self.id,
+            balance=self.balance,
+            last_transaction=[transaction.to_dto() for transaction in self.transactions.all().order_by('-created_at')[:5]],
+            user_id=self.user.id,
+            is_active=self.is_active
+        )

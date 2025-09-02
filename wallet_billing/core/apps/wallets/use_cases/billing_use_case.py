@@ -4,12 +4,12 @@ from core.apps.common.enums import OperationType
 from core.apps.wallets.dto.transaction import TransactionDTO
 from core.apps.wallets.dto.wallets import WalletOperationDTO
 from core.apps.wallets.exception.billings import UnsupportedOperationException
-from core.apps.wallets.services.wallets import BaseWalletService
+from core.apps.wallets.services.wallets import BaseWalletCommandService
 
 
 @dataclass
 class BillingUseCase:
-    wallet_service: BaseWalletService
+    wallet_service: BaseWalletCommandService
 
     def process_operation(self, operation: WalletOperationDTO) -> TransactionDTO:
         if operation.operation_type == OperationType.DEPOSIT:

@@ -14,7 +14,7 @@ from core.apps.wallets.use_cases.billing_use_case import BillingUseCase
 
 @pytest.fixture
 def billing_use_case():
-    """Фикстура для создания экземпляра TransactionService."""
+    """Фикстура для создания экземпляра BillingUseCase."""
     wallet_service_mock = Mock()
     return BillingUseCase(
         wallet_service=wallet_service_mock
@@ -36,35 +36,40 @@ def sample_transaction_dto():
 @pytest.mark.django_db
 class TestBillingUseCase:
 
-    def test_billing_deposit_operation(self, billing_use_case, sample_transaction_dto):
+    @pytest.mark.parametrize("operation_type, expected_method_name", [
+        (OperationType.DEPOSIT, "deposit"),
+        (OperationType.WITHDRAWAL, "withdrawal")
+    ])
+    def test_billing_operations_correct_method_called(self,
+            billing_use_case, sample_transaction_dto, operation_type, expected_method_name
+    ):
+        """
+        Тестирует, что для каждого типа операции вызывается соответствующий метод сервиса кошелька.
+        Проверяет корректность маршрутизации операций DEPOSIT и WITHDRAWAL.
+        """
         billing_use_case, wallet_service = billing_use_case
-        billing_use_case.wallet_service.deposit.return_value = sample_transaction_dto
+
         operation_dto = WalletOperationDTO(
             wallet_id=sample_transaction_dto.wallet_id,
-            operation_type=OperationType.DEPOSIT,
+            operation_type=operation_type,
             amount=sample_transaction_dto.amount
         )
 
-        deposit_transaction = billing_use_case.process_operation(operation=operation_dto)
+        expected_method = getattr(wallet_service, expected_method_name)
+        sample_transaction_dto.operation_type = operation_type
+        expected_method.return_value = sample_transaction_dto
 
-        assert deposit_transaction == sample_transaction_dto
-        wallet_service.deposit.assert_called_once_with(operation_dto)
+        transaction_dto = billing_use_case.process_operation(operation=operation_dto)
 
-    def test_billing_withdrawal_operation(self, billing_use_case, sample_transaction_dto):
-        billing_use_case, wallet_service = billing_use_case
-        billing_use_case.wallet_service.withdrawal.return_value = sample_transaction_dto
-        operation_dto = WalletOperationDTO(
-            wallet_id=sample_transaction_dto.wallet_id,
-            operation_type=OperationType.WITHDRAWAL,
-            amount=sample_transaction_dto.amount
-        )
+        assert transaction_dto == sample_transaction_dto
+        expected_method.assert_called_once_with(operation_dto)
 
-        deposit_transaction = billing_use_case.process_operation(operation=operation_dto)
-
-        assert deposit_transaction == sample_transaction_dto
-        wallet_service.withdrawal.assert_called_once_with(operation_dto)
 
     def test_billing_invalid_operation(self, billing_use_case, sample_transaction_dto):
+        """
+        Тестирует обработку неподдерживаемого типа операции.
+        Проверяет, что при передаче некорректного типа операции выбрасывается UnsupportedOperationException.
+        """
         billing_use_case, wallet_service = billing_use_case
         billing_use_case.wallet_service.deposit.return_value = sample_transaction_dto
         operation_dto = WalletOperationDTO(
